@@ -208,6 +208,19 @@ abstract class Driver extends PDODriver
     abstract public function getHandler(LoggerInterface $logger = null): AbstractHandler;
 
     /**
+     * Disconnect driver.
+     *
+     * @return self
+     */
+    public function disconnect(): PDODriver
+    {
+        parent::disconnect();
+        $this->transactionLevel = 0;
+       
+        return $this;
+    }
+    
+    /**
      * Start SQL transaction with specified isolation level (not all DBMS support it). Nested
      * transactions are processed using savepoints.
      *
