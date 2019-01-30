@@ -101,9 +101,9 @@ class MySQLDriver extends Driver
      */
     protected function clarifyException(\PDOException $exception, string $query): QueryException
     {
-        if ($exception->getCode() > 2000) {
-            return new ConnectionException($exception, $query);
-        }
+        //if ($exception->getCode() > 2000) {
+        //    return new ConnectionException($exception, $query);
+        //}
 
         return new QueryException($exception, $query);
     }
