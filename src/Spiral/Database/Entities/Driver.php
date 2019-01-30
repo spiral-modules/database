@@ -47,7 +47,7 @@ abstract class Driver extends PDODriver
      *
      * @var int
      */
-    private $transactionLevel = 0;
+    protected $transactionLevel = 0;
 
     /**
      * Defines IoC scope for all driver specific builders.
