@@ -406,6 +406,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
             }
 
             try {
+                if (!$this->getPDO()->inTransaction()) {
+                    return true;
+                }
+
                 return $this->getPDO()->commit();
             } catch (Throwable $e) {
                 throw $this->mapException($e, 'COMMIT TRANSACTION');
