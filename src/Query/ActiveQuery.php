@@ -105,7 +105,7 @@ abstract class ActiveQuery implements QueryInterface
 
         return $this->driver->getQueryCompiler()->compile(
             $parameters ?? new QueryParameters(),
-            $this->prefix ?? "",
+            $this->prefix ?? '',
             $this
         );
     }
