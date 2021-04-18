@@ -605,7 +605,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function formatDatetime(DateTimeInterface $value): string
     {
-        return $value->setTimezone($this->getTimezone())->format(static::DATETIME);
+        return (clone $value)->setTimezone($this->getTimezone())->format(static::DATETIME);
     }
 
     /**
