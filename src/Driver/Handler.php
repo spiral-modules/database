@@ -80,7 +80,7 @@ abstract class Handler implements HandlerInterface
         $comparator = $table->getComparator();
 
         if ($comparator->isPrimaryChanged()) {
-            throw new DBALException('Unable to change primary keys for existed table');
+            throw new DBALException("Unable to change primary keys for existed table `{$table->getName()}`");
         }
 
         if ($operation & self::DO_RENAME && $comparator->isRenamed()) {

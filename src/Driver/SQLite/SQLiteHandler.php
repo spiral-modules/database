@@ -84,7 +84,7 @@ class SQLiteHandler extends Handler
         }
 
         if ($table->getComparator()->isPrimaryChanged()) {
-            throw new DBALException('Unable to change primary keys for existed table');
+            throw new DBALException("Unable to change primary keys for existed table `{$table->getName()}`");
         }
 
         $initial = clone $table;
