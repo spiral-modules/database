@@ -103,7 +103,9 @@ abstract class ActiveQuery implements QueryInterface
             throw new BuilderException('Unable to build query without associated driver');
         }
 
-        return $this->driver->getQueryCompiler()->compile(
+        $compiler = $this->driver->getQueryCompiler();
+
+        return $compiler->compile(
             $parameters ?? new QueryParameters(),
             $this->prefix ?? '',
             $this
