@@ -34,7 +34,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     // DateTime format to be used to perform automatic conversion of DateTime objects.
-    protected const DATETIME = 'Y-m-d H:i:s';
+    protected const DATETIME = 'Y-m-d H:i:s.u';
 
     // Driver specific PDO options
     protected const DEFAULT_PDO_OPTIONS = [
@@ -605,13 +605,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      */
     protected function formatDatetime(DateTimeInterface $value): string
     {
-        try {
-            $datetime = new DateTimeImmutable('now', $this->getTimezone());
-        } catch (Throwable $e) {
-            throw new DriverException($e->getMessage(), $e->getCode(), $e);
-        }
-
-        return $datetime->setTimestamp($value->getTimestamp())->format(static::DATETIME);
+        return (clone $value)->setTimezone($this->getTimezone())->format(static::DATETIME);
     }
 
     /**

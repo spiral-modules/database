@@ -13,6 +13,7 @@ namespace Spiral\Database\Driver\MySQL\Schema;
 
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Exception\DefaultValueException;
+use Spiral\Database\Exception\SchemaException;
 use Spiral\Database\Injection\Fragment;
 use Spiral\Database\Injection\FragmentInterface;
 use Spiral\Database\Schema\AbstractColumn;
@@ -264,5 +265,26 @@ class MySQLColumn extends AbstractColumn
         }
 
         return parent::formatDatetime($type, $value);
+    }
+
+    /**
+     * Set column type as datetime with specific size (precision).
+     *
+     * @param int $size
+     * @return self|$this
+     *
+     * @throws SchemaException
+     */
+    public function datetime(int $size = 0): AbstractColumn
+    {
+        $this->type('datetime');
+
+        if ($size > 6) {
+            throw new SchemaException('Invalid size (precision) value; must be between 0 and 6.');
+        }
+
+        $this->size = (int)$size;
+
+        return $this;
     }
 }
