@@ -732,7 +732,6 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     protected function createPDO(): PDO
     {
         [$dsn, $user, $pass] = $this->parseDSN();
-        dd($dsn, $user, $pass);
 
         return new PDO($dsn, $user, $pass, $this->options['options']);
     }
