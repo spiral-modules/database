@@ -690,18 +690,51 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
+     * @return array{string, string, string}
+     */
+    private function parseDSN(): array
+    {
+        $dsn = $this->getDSN();
+
+        $user = (string)($this->options['username'] ?? '');
+        $pass = (string)($this->options['password'] ?? '');
+
+        if (\strpos($dsn, '://') > 0) {
+            $parts = \parse_url($dsn);
+
+            // Update username and password from DSN if not defined.
+            $user = $user ?: $parts['user'] ?? '';
+            $pass = $pass ?: $parts['pass'] ?? '';
+
+            // Build new DSN
+            $dsn = \vsprintf('%s:host=%s', [
+                $parts['scheme'] ?? 'mysql',
+                $parts['host'] ?? 'localhost'
+            ]);
+
+            if (isset($parts['port'])) {
+                $dsn .= ';port=' . $parts['port'];
+            }
+
+            if (isset($parts['path']) && \trim($parts['path'], '/')) {
+                $dsn .= ';dbname=' . \trim($parts['path'], '/');
+            }
+        }
+
+        return [$dsn, $user, $pass];
+    }
+
+    /**
      * Create instance of configured PDO class.
      *
      * @return PDO
      */
     protected function createPDO(): PDO
     {
-        return new PDO(
-            $this->getDSN(),
-            $this->options['username'],
-            $this->options['password'],
-            $this->options['options']
-        );
+        [$dsn, $user, $pass] = $this->parseDSN();
+        dd($dsn, $user, $pass);
+
+        return new PDO($dsn, $user, $pass, $this->options['options']);
     }
 
     /**
