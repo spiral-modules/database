@@ -18,6 +18,7 @@ use PDO;
 use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Spiral\Database\Exception\ConfigException;
 use Spiral\Database\Exception\DriverException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\ParameterInterface;
@@ -702,15 +703,16 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         if (\strpos($dsn, '://') > 0) {
             $parts = \parse_url($dsn);
 
+            if (!isset($parts['scheme'])) {
+                throw new ConfigException('Configuration database scheme must be defined');
+            }
+
             // Update username and password from DSN if not defined.
             $user = $user ?: $parts['user'] ?? '';
             $pass = $pass ?: $parts['pass'] ?? '';
 
             // Build new DSN
-            $dsn = \vsprintf('%s:host=%s', [
-                $parts['scheme'] ?? 'mysql',
-                $parts['host'] ?? 'localhost'
-            ]);
+            $dsn = \sprintf('%s:host=%s', $parts['scheme'], $parts['host'] ?? 'localhost');
 
             if (isset($parts['port'])) {
                 $dsn .= ';port=' . $parts['port'];
