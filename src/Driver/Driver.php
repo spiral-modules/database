@@ -333,7 +333,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function execute(string $query, array $parameters = []): int
     {
         if ($this->isReadonly()) {
-            throw ReadonlyConnectionException::fromNonQueryStatement();
+            throw ReadonlyConnectionException::onWriteStatementExecution();
         }
 
         return $this->statement($query, $parameters)->rowCount();

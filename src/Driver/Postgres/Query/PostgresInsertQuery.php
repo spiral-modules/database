@@ -69,7 +69,7 @@ class PostgresInsertQuery extends InsertQuery
         $queryString = $this->sqlStatement($params);
 
         if ($this->driver->isReadonly()) {
-            throw ReadonlyConnectionException::fromNonQueryStatement();
+            throw ReadonlyConnectionException::onWriteStatementExecution();
         }
 
         $result = $this->driver->query($queryString, $params->getParameters());
