@@ -20,7 +20,7 @@ class ReadonlyConnectionException extends DBALException
      * @param \Throwable|null $prev
      * @return static
      */
-    public static function fromNonQueryStatement(int $code = 0, \Throwable $prev = null): self
+    public static function onWriteStatementExecution(int $code = 0, \Throwable $prev = null): self
     {
         return new self(self::WRITE_STMT_MESSAGE, $code, $prev);
     }
