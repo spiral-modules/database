@@ -14,6 +14,7 @@ namespace Spiral\Database\Driver;
 use DateTimeZone;
 use PDO;
 use Spiral\Database\Exception\DriverException;
+use Spiral\Database\Exception\ReadonlyConnectionException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Query\BuilderInterface;
 use Spiral\Database\StatementInterface;
@@ -169,6 +170,7 @@ interface DriverInterface
      * @return int
      *
      * @throws StatementException
+     * @throws ReadonlyConnectionException
      */
     public function execute(string $query, array $parameters = []): int;
 

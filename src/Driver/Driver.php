@@ -19,6 +19,7 @@ use PDOStatement;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Spiral\Database\Exception\DriverException;
+use Spiral\Database\Exception\ReadonlyConnectionException;
 use Spiral\Database\Exception\StatementException;
 use Spiral\Database\Injection\ParameterInterface;
 use Spiral\Database\Query\BuilderInterface;
@@ -69,7 +70,10 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         'queryCache'     => true,
 
         // disable schema modifications
-        'readonlySchema' => false
+        'readonlySchema' => false,
+
+        // disable write expressions
+        'readonly'       => false,
     ];
 
     /** @var PDO|null */
@@ -123,6 +127,17 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         if ($this->options['readonlySchema']) {
             $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
         }
+    }
+
+    /**
+     * Returns {@see true} in the case that the connection is available only
+     * for reading or {@see false} instead.
+     *
+     * @return bool
+     */
+    private function isReadonly(): bool
+    {
+        return (bool)($this->options['readonly'] ?? false);
     }
 
     /**
@@ -316,9 +331,16 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
      * @return int
      *
      * @throws StatementException
+     * @throws ReadonlyConnectionException
      */
     public function execute(string $query, array $parameters = []): int
     {
+        if ($this->isReadonly()) {
+            throw new ReadonlyConnectionException(
+                'Can not execute non-query statement on readonly connection'
+            );
+        }
+
         return $this->statement($query, $parameters)->rowCount();
     }
 
