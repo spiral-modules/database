@@ -88,6 +88,14 @@ interface DriverInterface
     public const ISOLATION_READ_UNCOMMITTED = 'READ UNCOMMITTED';
 
     /**
+     * Returns {@see true} in the case that the connection is available only
+     * for reading or {@see false} instead.
+     *
+     * @return bool
+     */
+    public function isReadonly(): bool;
+
+    /**
      * Driver type (name).
      *
      * @return string

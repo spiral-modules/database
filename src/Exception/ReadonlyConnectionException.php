@@ -13,4 +13,15 @@ namespace Spiral\Database\Exception;
 
 class ReadonlyConnectionException extends DBALException
 {
+    private const WRITE_STMT_MESSAGE = 'Can not execute non-query statement on readonly connection.';
+
+    /**
+     * @param int $code
+     * @param \Throwable|null $prev
+     * @return static
+     */
+    public static function fromNonQueryStatement(int $code = 0, \Throwable $prev = null): self
+    {
+        return new self(self::WRITE_STMT_MESSAGE, $code, $prev);
+    }
 }

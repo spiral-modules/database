@@ -130,12 +130,9 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Returns {@see true} in the case that the connection is available only
-     * for reading or {@see false} instead.
-     *
-     * @return bool
+     * {@inheritDoc}
      */
-    private function isReadonly(): bool
+    public function isReadonly(): bool
     {
         return (bool)($this->options['readonly'] ?? false);
     }
@@ -336,9 +333,7 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
     public function execute(string $query, array $parameters = []): int
     {
         if ($this->isReadonly()) {
-            throw new ReadonlyConnectionException(
-                'Can not execute non-query statement on readonly connection'
-            );
+            throw ReadonlyConnectionException::fromNonQueryStatement();
         }
 
         return $this->statement($query, $parameters)->rowCount();

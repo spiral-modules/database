@@ -5,57 +5,60 @@ declare(strict_types=1);
 namespace Spiral\Database\Tests;
 
 use Spiral\Database\Database;
+use Spiral\Database\Driver\Driver;
 use Spiral\Database\Exception\ReadonlyConnectionException;
 use Spiral\Database\Table;
 
 abstract class ReadonlyTest extends BaseTest
 {
     /**
-     * @var Database
-     */
-    protected $database;
-
-    /**
-     * @var Database
-     */
-    protected $readonly;
-
-    /**
      * @var string
      */
     protected $table = 'readonly_tests';
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
-        parent::setUp();
+        $this->database = new Database('default', '', $this->getDriver(['readonly' => true]));
 
-        $table = $this->database->table($this->table);
-        $schema = $table->getSchema();
-        $schema->primary('id');
-        $schema->string('value')->nullable();
-        $schema->save();
+        $this->allowWrite(function () {
+            $table = $this->database->table($this->table);
+            $schema = $table->getSchema();
+            $schema->primary('id');
+            $schema->string('value')->nullable();
+            $schema->save();
+        });
+    }
 
-        // Create readonly connection
-        $this->readonly = new Database('default', '', $this->getDriver(['readonly' => true]));
+    private function allowWrite(\Closure $then): void
+    {
+        /** @var Driver $driver */
+        $driver = $this->database->getDriver();
+
+        (function(\Closure $then): void {
+            $this->options['readonly'] = false;
+            try {
+                $then();
+            } finally {
+                $this->options['readonly'] = true;
+            }
+        })->call($driver, $then);
     }
 
     public function tearDown(): void
     {
-        $schema = $this->database->table($this->table)
-            ->getSchema();
+        $this->allowWrite(function () {
+            $schema = $this->database->table($this->table)
+                ->getSchema();
 
-        $schema->declareDropped();
-        $schema->save();
+            $schema->declareDropped();
+            $schema->save();
+        });
     }
 
     protected function table(): Table
     {
-        return $this->readonly->table($this->table);
+        return $this->database->table($this->table);
     }
-
 
     public function testTableAllowSelection(): void
     {
@@ -219,7 +222,7 @@ abstract class ReadonlyTest extends BaseTest
     {
         $this->expectException(ReadonlyConnectionException::class);
 
-        $table = $this->readonly
+        $table = $this->database
             ->table('not_allowed_to_creation');
 
         $schema = $table->getSchema();
@@ -232,7 +235,7 @@ abstract class ReadonlyTest extends BaseTest
     {
         $this->expectNotToPerformAssertions();
 
-        $this->readonly->select()
+        $this->database->select()
             ->from($this->table)
             ->run()
         ;
@@ -242,7 +245,7 @@ abstract class ReadonlyTest extends BaseTest
     {
         $this->expectException(ReadonlyConnectionException::class);
 
-        $this->readonly->update($this->table, ['value' => 'example'])
+        $this->database->update($this->table, ['value' => 'example'])
             ->run()
         ;
     }
@@ -251,7 +254,7 @@ abstract class ReadonlyTest extends BaseTest
     {
         $this->expectException(ReadonlyConnectionException::class);
 
-        $this->readonly->insert($this->table)
+        $this->database->insert($this->table)
             ->columns('value')
             ->values('example')
             ->run()
@@ -262,7 +265,7 @@ abstract class ReadonlyTest extends BaseTest
     {
         $this->expectException(ReadonlyConnectionException::class);
 
-        $this->readonly->delete($this->table)
+        $this->database->delete($this->table)
             ->run()
         ;
     }
@@ -271,13 +274,13 @@ abstract class ReadonlyTest extends BaseTest
     {
         $this->expectNotToPerformAssertions();
 
-        $this->readonly->query('SELECT 1');
+        $this->database->query('SELECT 1');
     }
 
     public function testDatabaseRejectRawExecution(): void
     {
         $this->expectException(ReadonlyConnectionException::class);
 
-        $this->readonly->execute("DROP TABLE {$this->table}");
+        $this->database->execute("DROP TABLE {$this->table}");
     }
 }
