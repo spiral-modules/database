@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Spiral\Database\Query;
 
 use Spiral\Database\Driver\CompilerInterface;
-use Spiral\Database\Exception\BuilderException;
 use Spiral\Database\Injection\Parameter;
 
 /**

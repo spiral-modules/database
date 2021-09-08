@@ -14,6 +14,7 @@ namespace Spiral\Database\Driver\Postgres\Query;
 use Spiral\Database\Driver\DriverInterface;
 use Spiral\Database\Driver\Postgres\PostgresDriver;
 use Spiral\Database\Exception\BuilderException;
+use Spiral\Database\Exception\ReadonlyConnectionException;
 use Spiral\Database\Query\InsertQuery;
 use Spiral\Database\Query\QueryInterface;
 use Spiral\Database\Query\QueryParameters;
@@ -66,6 +67,10 @@ class PostgresInsertQuery extends InsertQuery
     {
         $params = new QueryParameters();
         $queryString = $this->sqlStatement($params);
+
+        if ($this->driver->isReadonly()) {
+            throw ReadonlyConnectionException::onWriteStatementExecution();
+        }
 
         $result = $this->driver->query($queryString, $params->getParameters());
 

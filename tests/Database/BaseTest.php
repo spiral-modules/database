@@ -51,11 +51,13 @@ abstract class BaseTest extends TestCase
     }
 
     /**
+     * @param array $options
      * @return Driver
      */
-    public function getDriver(): Driver
+    public function getDriver(array $options = []): Driver
     {
         $config = self::$config[static::DRIVER];
+
         if (!isset($this->driver)) {
             $class = $config['driver'];
 
@@ -83,15 +85,15 @@ abstract class BaseTest extends TestCase
     /**
      * @param string $name
      * @param string $prefix
-     *
+     * @param array $config
      * @return Database|null When non empty null will be given, for safety, for science.
      */
-    protected function db(string $name = 'default', string $prefix = '')
+    protected function db(string $name = 'default', string $prefix = '', array $config = []): ?Database
     {
         if (isset(static::$driverCache[static::DRIVER])) {
             $driver = static::$driverCache[static::DRIVER];
         } else {
-            static::$driverCache[static::DRIVER] = $driver = $this->getDriver();
+            static::$driverCache[static::DRIVER] = $driver = $this->getDriver($config);
         }
 
         return new Database($name, $prefix, $driver);
