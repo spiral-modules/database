@@ -124,6 +124,33 @@ abstract class Driver implements DriverInterface, LoggerAwareInterface
         if ($this->options['readonlySchema']) {
             $this->schemaHandler = new ReadonlyHandler($this->schemaHandler);
         }
+
+        // Actualize DSN
+        $this->updateDSN();
+    }
+
+    /**
+     * Updates an internal options
+     *
+     * @return void
+     */
+    private function updateDSN(): void
+    {
+        [$connection, $this->options['username'], $this->options['password']] = $this->parseDSN();
+
+        // Update connection. The DSN field can be located in one of the
+        // following keys of the configuration array.
+        switch (true) {
+            case \array_key_exists('dsn', $this->options):
+                $this->options['dsn'] = $connection;
+                break;
+            case \array_key_exists('addr', $this->options):
+                $this->options['addr'] = $connection;
+                break;
+            default:
+                $this->options['connection'] = $connection;
+                break;
+        }
     }
 
     /**
