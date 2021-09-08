@@ -34,7 +34,7 @@ abstract class ReadonlyTest extends BaseTest
         /** @var Driver $driver */
         $driver = $this->database->getDriver();
 
-        (function(\Closure $then): void {
+        (function (\Closure $then): void {
             $this->options['readonly'] = false;
             try {
                 $then();
