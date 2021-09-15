@@ -15,7 +15,7 @@ namespace Spiral\Database;
  * Must implement Traversable as IteratorAggregate or Iterator. You can access underlying PDOStatement
  * using getPDOStatement() method of `Spiral\Database\Driver\Statement` object.
  */
-interface StatementInterface
+interface StatementInterface extends \IteratorAggregate
 {
     // Fetch rows as assoc array. Default.
     public const FETCH_ASSOC = 2;
