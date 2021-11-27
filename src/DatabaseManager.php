@@ -135,6 +135,10 @@ final class DatabaseManager implements
      */
     public function createInjection(\ReflectionClass $class, string $context = null)
     {
+        if (count($this->config->getDatabases()) === 1) {
+            return $this->database($this->config->getDefaultDatabase());
+        }
+
         // if context is empty default database will be returned
         return $this->database($context);
     }

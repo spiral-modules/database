@@ -115,6 +115,9 @@ class ManagerTest extends TestCase
         $db = $container->get(Database::class);
         $this->assertSame($read, $db->getDriver(Database::READ));
         $this->assertSame($write, $db->getDriver(Database::WRITE));
+        $db = $container->get(Database::class, 'somecustomname');
+        $this->assertSame($read, $db->getDriver(Database::READ));
+        $this->assertSame($write, $db->getDriver(Database::WRITE));
     }
 
     public function testGetDrivers(): void
