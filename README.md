@@ -2,7 +2,7 @@
 Spiral DBAL
 ========
 
-### PLEASE NOTE, THIS PROJECT IS MOVED IS TO A NEW [REPOSITORY](https://github.com/cycle/database) AND IS NO LONGER BEING MAINTAINED.
+### PLEASE NOTE, THIS PROJECT IS MOVED TO A NEW [REPOSITORY](https://github.com/cycle/database) AND IS NO LONGER BEING MAINTAINED.
 
 License:
 --------
