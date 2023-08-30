@@ -43,8 +43,8 @@ class SQLServerDriver extends Driver
             QueryBuilder::defaultBuilder()
         );
 
-        if ((int)$this->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 12) {
-            throw new DriverException('SQLServer driver supports only 12+ version of SQLServer');
+        if ((int)$this->getPDO()->getAttribute(\PDO::ATTR_SERVER_VERSION) < 11) {
+            throw new DriverException('SQLServer driver supports only 11+ version of SQLServer');
         }
     }
 
